@@ -1,16 +1,12 @@
 # coding=utf-8
 import codecs
-import pickle
-
 from collections import defaultdict
-
-import dill as dill
 
 FORMS_FILENAME = 'data/forms.txt'
 FORMS_CACHE_FILENAME = 'cache/forms.txt'
 
 
-class PLP(object):
+class Dictionary(object):
     def __init__(self):
         self.basic_forms = []
         self.forms = defaultdict(lambda: [])
@@ -33,13 +29,13 @@ class PLP(object):
         return self.basic_forms[id]
 
 
-print 'Initializing PLP...'
-p = PLP()
+print 'Initializing dictionary...'
+dict = Dictionary()
 
 
 def basic_form(word):
-    ids = p.rec(word)
-    return p.bform(ids[0]) if len(ids) > 0 else word
+    ids = dict.rec(word)
+    return dict.bform(ids[0]) if len(ids) > 0 else word
 
 
 if __name__ == '__main__':

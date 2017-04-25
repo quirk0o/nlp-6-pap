@@ -1,57 +1,35 @@
 # coding=utf-8
-import codecs
 import math
-import re
 from collections import defaultdict
 
-from plp import basic_form
-from preprocessor import clean_corpus
+from library import Document, Library
 
-
-class LanguageModel(object):
-    def __init__(self, documents):
-        self.__df__ = defaultdict(lambda: 0)
-        self.terms = set()
-        self.N = len(documents)
-
-        for doc in documents:
-            words = doc.split()
-            basic_forms = set([basic_form(word) for word in words])
-
-            for word in basic_forms:
-                self.__df__[word] += 1
-                self.terms.add(word)
-
-    def df(self, term):
-        return self.__df__[term]
+print 'Initializing library...'
+lib = Library()
 
 
 def tf(term, document):
-    words = [basic_form(word) for word in document.split()]
-    return len(filter(lambda x: x == term, words))
+    return document.vec[term]
+
+
+def idf(term):
+    return math.log(float(lib.N) / lib.df(term), 2) if lib.df(term) != 0 else float('inf')
 
 
 def tf_idf(term, document):
-    return tf(term, document) * math.log(float(lm.N) / lm.df(term), 2)
+    return tf(term, document) * idf(term)
 
 
 def doc2vec(document):
-    return [tf_idf(term, document) for term in lm.terms]
+    return defaultdict(lambda: 0, [(term, tf_idf(term, document)) for term in document.words])
 
 
 def distance(v1, v2):
-    return math.sqrt(sum([(i - j) ** 2 for i, j in zip(v1, v2)]))
+    keys = set(v1.keys()).union(v2.keys())
+    return math.sqrt(sum([(v1[key] - v2[key]) ** 2 for key in keys]))
 
 
 if __name__ == '__main__':
-    with codecs.open('data/pap.txt', encoding='utf-8') as docs_file:
-        input = docs_file.read()
-        documents = re.split('#\d+', input)
-        documents = [clean_corpus(doc) for doc in documents if doc]
-
-    print 'Initializing language model...'
-    lm = LanguageModel(documents)
-
     doc1 = u'W nocy ze środy na czwartek zmarł po długiej i ciężkiej chorobie ' \
            u'minister kultury i dziedzictwa narodowego Andrzej Zakrzewski. ' \
            u'Miał 59 lat. Z wykształcenia prawnik, był historykiem, badaczem ' \
@@ -84,14 +62,14 @@ if __name__ == '__main__':
            u'Szef rządu wrzucił pierścień do wody, podobnie jak zrobił to w ' \
            u'1920 r. gen. Józef Haller, dokonując symbolicznego aktu ' \
            u'przywrócenia Polsce dostępu do Bałtyku. ' \
-           u'Ostatnim etapem obchodów 80 rocznicy Zaślubin Polski z Morzem były' \
-           u'uroczystości we Władysławowie. Głównym ich punktem było utworzenie' \
+           u'Ostatnim etapem obchodów 80 rocznicy Zaślubin Polski z Morzem były ' \
+           u'uroczystości we Władysławowie. Głównym ich punktem było utworzenie ' \
            u'"Hallerówki" - muzeum poświęconego gen. Józefowi Hallerowi. '
 
     print 'Preparing documents...'
-    doc1 = clean_corpus(doc1)
-    doc2 = clean_corpus(doc2)
-    doc3 = clean_corpus(doc3)
+    doc1 = Document(1, doc1)
+    doc2 = Document(2, doc2)
+    doc3 = Document(3, doc3)
 
     print 'Calculating vectors...'
     vec1 = doc2vec(doc1)
