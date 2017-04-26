@@ -17,7 +17,4 @@ class Vec(object):
         return 1 - sum([self.vec[key] * other.vec[key] for key in keys]) / (self.len() * other.len())
 
     def __str__(self):
-        return super(Vec, self).__str__()
-
-    def __repr__(self):
-        return str(self)
+        return '\n'.join(['{}: {}'.format(str(key), str(value)) for key, value in self.vec.items()])
