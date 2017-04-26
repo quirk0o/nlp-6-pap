@@ -42,15 +42,12 @@ if __name__ == '__main__':
     doc2 = u'O 40 procent zostanie podniesiona wkrótce w Rosji minimalna cena ' \
            u'wódki - poinformowało ministerstwo gospodarki.'
 
+    doc1 = Document(id1, doc1)
+    vec1 = doc2vec(doc1)
+    vec1.normalize()
+
     doc2 = Document(id2, doc2)
     vec2 = doc2vec(doc2)
+    vec2.normalize()
 
-    print 'Calculating similarity...'
-    for doc in lib.documents():
-        if doc.id == doc2.id: continue
-        
-        vec = doc2vec(doc)
-        dist = vec.distance(vec2)
-        if dist < 0.82:
-            print dist
-            print doc.text
+    print vec1.cos_dist(vec2)

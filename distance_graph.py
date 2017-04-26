@@ -2,8 +2,11 @@
 from collections import Counter
 
 from graph import Graph
-from library import Document
+from library import Document, Library
 from vec import Vec
+
+print 'Initializing library...'
+lib = Library()
 
 
 class DistanceGraph(Graph):
@@ -26,17 +29,21 @@ class DistanceGraph(Graph):
 
 
 if __name__ == '__main__':
-    doc1 = u'W nocy ze środy na czwartek zmarł po długiej i ciężkiej chorobie ' \
-           u'minister kultury i dziedzictwa narodowego Andrzej Zakrzewski. ' \
-           u'Miał 59 lat. Z wykształcenia prawnik, był historykiem, badaczem ' \
-           u'historii, m.in. II Rzeczypospolitej. Przez wiele lat pracował w ' \
-           u'Instytucie Historii PAN. ' \
-           u'W latach 1991-95 był wysokim rangą urzędnikiem w Kancelarii ' \
-           u'Prezydenta i jednym z najbliższych współpracowników Lecha ' \
-           u'Wałęsy. W 1997 roku kandydował do Sejmu z list AWS. Jako poseł ' \
-           u'tego ugrupowania stanął na czele Komisji Łączności z Polakami za ' \
-           u'Granicą. Był członkiem Ruchu Stu, a od marca 1998 r. - ' \
-           u'Stronnictwa Konserwatywno-Ludowego.'
+    doc1 = u'O 40 procent zostanie podniesiona wkrótce w Rosji minimalna cena ' \
+           u'wódki - poinformowało ministerstwo gospodarki.'
 
-    graph = DistanceGraph(3, Document(1, doc1))
-    print graph.svm()
+    doc1 = Document(40, doc1)
+    graph1 = DistanceGraph(10, doc1)
+    vec1 = graph1.svm()
+
+    print 'Calculating similarity...'
+    for doc in lib.documents():
+        if doc.id == doc1.id: continue
+
+        graph = DistanceGraph(10, doc)
+        vec = graph.svm()
+        dist = vec.cos_dist(vec1)
+
+        if dist < 0.95:
+            print dist
+            print doc.text

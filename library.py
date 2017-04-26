@@ -26,7 +26,7 @@ class Library(object):
         corpus = codecs.open(LIBRARY_FILENAME, encoding='utf-8').read()
         documents = re.split(DOCUMENT_SEP, corpus)
         ids = [int(id) for id in documents[1::2]]
-        documents = documents[0::2]
+        documents = documents[2::2]
 
         self._documents = dict([(id, Document(id, doc)) for id, doc in zip(ids, documents) if doc])
         self.N = len(documents)
