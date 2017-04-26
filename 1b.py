@@ -1,12 +1,15 @@
 # coding=utf-8
 import sys
 
-from library import Document
-from distance_graph import DistanceGraph, lib
+from library import Document, Library
+from distance_graph import DistanceGraph
 
 alpha = 0.95
 
 if __name__ == '__main__':
+    print 'Initializing library...'
+    lib = Library()
+
     try:
         id = int(sys.argv[3])
         input_doc = lib.doc(id)
@@ -15,7 +18,7 @@ if __name__ == '__main__':
         input_doc = Document(id, sys.argv[3])
 
     k = int(sys.argv[1])
-    alpha = int(sys.argv[2])
+    alpha = float(sys.argv[2])
 
     input_graph = DistanceGraph(k, input_doc)
     input_vec = input_graph.svm()

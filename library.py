@@ -19,6 +19,8 @@ class Document(object):
         self.text = document
         self.words = [basic_form(word) for word in clean_corpus(document)]
         self.vec = Counter(self.words)
+        self.tf_idf = None
+        self.svm = None
 
 
 class Library(object):

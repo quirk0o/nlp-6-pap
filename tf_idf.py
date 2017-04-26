@@ -4,27 +4,29 @@ import math
 from library import Document, Library
 from vec import Vec
 
-print 'Initializing library...'
-lib = Library()
 
+class Doc2Vec(object):
+    def __init__(self, library):
+        self.lib = library
 
-def tf(term, document):
-    return document.vec[term]
+    def tf(self, term, document):
+        return document.vec[term]
 
+    def idf(self, term):
+        return math.log(float(self.lib.N) / self.lib.df(term), 2) if self.lib.df(term) != 0 else float('inf')
 
-def idf(term):
-    return math.log(float(lib.N) / lib.df(term), 2) if lib.df(term) != 0 else float('inf')
+    def tf_idf(self, term, document):
+        return self.tf(term, document) * self.idf(term)
 
-
-def tf_idf(term, document):
-    return tf(term, document) * idf(term)
-
-
-def doc2vec(document):
-    return Vec([(term, tf_idf(term, document)) for term in document.words])
+    def doc2vec(self, document):
+        return Vec([(term, self.tf_idf(term, document)) for term in document.words])
 
 
 if __name__ == '__main__':
+    print 'Initializing library...'
+    lib = Library()
+    d2v = Doc2Vec(lib)
+
     id1 = 1
     doc1 = u'W nocy ze środy na czwartek zmarł po długiej i ciężkiej chorobie ' \
            u'minister kultury i dziedzictwa narodowego Andrzej Zakrzewski. ' \
@@ -43,11 +45,11 @@ if __name__ == '__main__':
            u'wódki - poinformowało ministerstwo gospodarki.'
 
     doc1 = Document(id1, doc1)
-    vec1 = doc2vec(doc1)
+    vec1 = d2v.doc2vec(doc1)
     vec1.normalize()
 
     doc2 = Document(id2, doc2)
-    vec2 = doc2vec(doc2)
+    vec2 = d2v.doc2vec(doc2)
     vec2.normalize()
 
     print vec1.cos_dist(vec2)

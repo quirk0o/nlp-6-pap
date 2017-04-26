@@ -11,6 +11,8 @@ class Vec(object):
         for key, value in self.vec.items():
             self.vec[key] = value / length
 
+        return self
+
     def len(self):
         return math.sqrt(sum([x ** 2 for x in self.vec.values()]))
 
